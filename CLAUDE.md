@@ -15,6 +15,10 @@ placeholder demonstrating the layout, not a real application.
 src/
   cmd/app/       main package — binary entrypoint
   internal/      private packages, not importable outside this module
+    database/    data access: connections, queries, repositories
+    service/     business logic, independent of API vs. script
+    request/     input/output boundary: HTTP handlers or CLI args
+    utilities/   small shared helpers with no business logic
 tests/           integration/end-to-end tests
 .github/         workflows, issue templates, PR template
 ```
@@ -25,6 +29,11 @@ tests/           integration/end-to-end tests
   multiple packages or the built binary together.
 - New packages go under `src/internal/` unless they are meant to be
   imported by other modules, in which case use `src/pkg/`.
+- Each project instantiated from this template is single-purpose (one
+  API or one script), so `src/cmd/` holds a single entrypoint. Keep
+  logic layered — `request` (I/O boundary) calls `service` (business
+  logic) calls `database`/`utilities` — and only add the layers a given
+  project actually needs; don't stub out empty packages "for later".
 
 ## Commands
 

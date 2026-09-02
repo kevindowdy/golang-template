@@ -47,12 +47,22 @@ go test ./...
 ## Project Structure
 
 ```
-src/            Application source code
-  cmd/app/      Binary entrypoint (main package)
-  internal/     Private packages not importable by other modules
-tests/          Integration/end-to-end tests
-.github/        CI/CD workflows and issue/PR templates
+src/                  Application source code
+  cmd/app/            Binary entrypoint (main package)
+  internal/           Private packages not importable by other modules
+    database/         Data access: connections, queries, repositories
+    service/          Business logic, independent of API vs. script
+    request/          Input/output boundary: HTTP handlers or CLI args
+    utilities/        Small shared helpers with no business logic
+tests/                Integration/end-to-end tests
+.github/              CI/CD workflows and issue/PR templates
 ```
+
+`request` calls into `service`, which calls into `database` and
+`utilities`. This split holds whether the binary is an API (`request`
+holds HTTP handlers) or a script (`request` holds CLI flag parsing) —
+each project instantiated from this template is single-purpose, so keep
+only the layers you actually need.
 
 Unit tests live alongside the package they test (Go convention); `tests/`
 holds broader integration tests.
